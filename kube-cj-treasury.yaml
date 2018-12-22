@@ -28,6 +28,7 @@ spec:
                   ls -al;
                   [ -d "jupyter-analytics" ] || git clone https://github.com/ajarv/jupyter-analytics.git;
                   cd /home/jovyan/jupyter-analytics;
+                  git pull;
                   bash jobs/jseq.sh;
               image: jupyter/scipy-notebook
               name: pandu
