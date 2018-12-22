@@ -30,17 +30,17 @@ spec:
       terminationGracePeriodSeconds: 10
       initContainers:
         - name: init-jupyter
-          image: busybox
+          image: jupyter/scipy-notebook #jupyter/minimal-notebook:latest
           volumeMounts:
-            - name: jwork
+            - name: jovyan-data
               mountPath: /home/jovyan
-              command:
-                [
-                  "git",
-                  "clone",
-                  "https://github.com/ajarv/jupyter-analytics.git",
-                  "/home/jovyan",
-                ]
+          command:
+            - /bin/bash
+            - -c
+            - >
+              cd /home/jovyan;
+              ls -al;
+              [ -d "jupyter-analytics" ] || git clone https://github.com/ajarv/jupyter-analytics.git
       containers:
         - name: jupyter
           image: jupyter/scipy-notebook #jupyter/minimal-notebook:latest
@@ -53,6 +53,13 @@ spec:
           volumeMounts:
             - name: jovyan-data
               mountPath: /home/jovyan
+          command:
+            [
+              "jupyter",
+              "notebook",
+              "--notebook-dir",
+              "/home/jovyan/jupyter-analytics/notebook",
+            ]
       volumes:
         - name: jovyan-data
           persistentVolumeClaim:

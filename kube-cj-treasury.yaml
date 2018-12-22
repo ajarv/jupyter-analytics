@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     parent: cron-py
-  name: scan-web
+  name: tres-rate-fetch
 spec:
   concurrencyPolicy: Allow
   jobTemplate:
@@ -22,7 +22,13 @@ spec:
           containers:
             - command:
                 - /bin/bash
-                - /home/jovyan/jobs/jseq.sh
+                - -c
+                - >
+                  cd /home/jovyan;
+                  ls -al;
+                  [ -d "jupyter-analytics" ] || git clone https://github.com/ajarv/jupyter-analytics.git;
+                  cd /home/jovyan/jupyter-analytics;
+                  bash jobs/jseq.sh;
               image: jupyter/scipy-notebook
               name: pandu
               resources: {}
@@ -34,4 +40,5 @@ spec:
               persistentVolumeClaim:
                 claimName: jovyan-data
           restartPolicy: OnFailure
-  schedule: "12 6 * * *"
+  schedule: "*/1 * * * *"
+  # schedule: "12 6 * * *"
