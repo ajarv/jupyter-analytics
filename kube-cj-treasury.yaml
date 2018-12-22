@@ -40,5 +40,5 @@ spec:
               persistentVolumeClaim:
                 claimName: jovyan-data
           restartPolicy: OnFailure
-  schedule: "*/1 * * * *"
-  # schedule: "12 6 * * *"
+  # schedule: "*/1 * * * *"
+  schedule: "12 6 * * *"
