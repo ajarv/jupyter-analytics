@@ -12,7 +12,6 @@ def get_year_rates(year=2019):
 
     _url = 'http://data.treasury.gov/feed.svc/DailyTreasuryYieldCurveRateData?$filter=year(NEW_DATE)%20eq%20{0}'.format(
         year)
-#     print (_url)
     with urllib.request.urlopen(_url) as response:
         root = ET.parse(response)
     d = {}
@@ -69,10 +68,12 @@ def main():
     LOGFORMAT = '<%(asctime)-15s> %(message)s'
 
     logging.basicConfig(level=logging.DEBUG, format=LOGFORMAT)
-    LOCAL_FILE = os.path.join(os.path.split(__file__)[0], "treasury_yield.csv")
+    base_dir = os.path.abspath(os.path.split(__file__)[0]+'/..')
+    LOCAL_FILE = os.path.join(base_dir, "data","treasury_yield.csv")
 
     df = load_web_data(LOCAL_FILE)
-    print(df.tail(10))
+    print(df.tail(1))
 
 
-main()
+if __name__ == "__main__":
+    main()
