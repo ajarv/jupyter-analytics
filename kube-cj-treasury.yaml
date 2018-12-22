@@ -1,0 +1,37 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  creationTimestamp: null
+  labels:
+    parent: cron-py
+  name: scan-web
+spec:
+  concurrencyPolicy: Allow
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      successfulJobsHistoryLimit: 3
+      failedJobsHistoryLimit: 1
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            parent: cron-py
+        spec:
+          containers:
+            - command:
+                - /bin/bash
+                - /home/jovyan/jobs/jseq.sh
+              image: jupyter/scipy-notebook
+              name: pandu
+              resources: {}
+              volumeMounts:
+                - name: jovyan-data
+                  mountPath: /home/jovyan
+          volumes:
+            - name: jovyan-data
+              persistentVolumeClaim:
+                claimName: jovyan-data
+          restartPolicy: OnFailure
+  schedule: "12 6 * * *"

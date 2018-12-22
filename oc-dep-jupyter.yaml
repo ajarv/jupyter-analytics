@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter
+  labels:
+    app: jupyter
+spec:
+  ports:
+    - port: 8888
+      name: web
+  clusterIP: None
+  selector:
+    app: jupyter
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jupyter
+spec:
+  selector:
+    matchLabels:
+      app: jupyter # has to match .spec.template.metadata.labels
+  serviceName: "jupyter"
+  replicas: 1 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: jupyter # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      initContainers:
+        - name: init-jupyter
+          image: busybox
+          volumeMounts:
+            - name: jwork
+              mountPath: /home/jovyan
+              command:
+                [
+                  "git",
+                  "clone",
+                  "https://github.com/ajarv/jupyter-analytics.git",
+                  "/home/jovyan",
+                ]
+      containers:
+        - name: jupyter
+          image: jupyter/scipy-notebook #jupyter/minimal-notebook:latest
+          env:
+            - name: JUPYTER_NOTEBOOK_PASSWORD
+              value: lavendarseed
+          ports:
+            - containerPort: 8888
+              name: web
+          volumeMounts:
+            - name: jovyan-data
+              mountPath: /home/jovyan
+      volumes:
+        - name: jovyan-data
+          persistentVolumeClaim:
+            claimName: jovyan-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jovyan-data
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: jupyter-storage-class
+  resources:
+    requests:
+      storage: 1Gi

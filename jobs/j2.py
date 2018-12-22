@@ -40,8 +40,8 @@ def line_plot(plt,title,df,colns=None,colLabs=None,xCol = 'day',xSeries=None,yli
     if fig_path:
         plt.savefig(fig_path)
 
-def get_df(base_dir):
-    df = pd.read_csv(base_dir+'/data/treasury_yield.csv')
+def get_df(csv_path):
+    df = pd.read_csv(csv_path)
     df.NEW_DATE = pd.to_datetime(df.NEW_DATE)
     df = df.set_index('NEW_DATE')
     return df
@@ -49,20 +49,33 @@ def get_df(base_dir):
 
 def main():
     LOGFORMAT = '<%(asctime)-15s> %(message)s'
-
     logging.basicConfig(level=logging.DEBUG, format=LOGFORMAT)
 
-    base_dir = os.path.abspath( os.path.split(__file__)[0]+'/..')
-    logging.info("Running in base Dir {}".format(base_dir))
 
-    df = get_df(base_dir)
+    from optparse import OptionParser
+    parser = OptionParser(description='Download US Treasury Bond Rates')
+    parser.add_option("--in-csv", dest="csvfile",
+                    help="Input CSV File Path")
+    parser.add_option("--out-png", dest="chartfile",
+                    help="Output Chart PNG File Path")
+    (options, args) = parser.parse_args()
+    print(options,args)
+
+    csv_file_path = options.csvfile
+    fig_path = options.chartfile
+    # fig_path = os.path.join(base_dir, "charts", "ty_3m_5y_30y.png")
+
+
+    # base_dir = os.path.abspath( os.path.split(__file__)[0]+'/..')
+    # logging.info("Running in base Dir {}".format(base_dir))
+
+    df = get_df(csv_file_path)
     _df = df.resample('7D', convention='end').mean()
     _df = _df.tail(52*7)
 
     # print(df['FC_3'])
 
     # line_plot(plt,'',_df,colns=['BC_3MONTH','BC_1YEAR','BC_5YEAR','BC_10YEAR','BC_20YEAR','BC_30YEAR'],xSeries=_df.index)
-    fig_path = os.path.join(base_dir, "charts", "ty_3m_5y_30y.png")
     line_plot(plt,
             '% US Treasury Yield',
             _df,

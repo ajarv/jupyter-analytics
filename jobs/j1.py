@@ -66,14 +66,22 @@ def load_local_data(csv_file_path):
 
 def main():
     LOGFORMAT = '<%(asctime)-15s> %(message)s'
-
     logging.basicConfig(level=logging.DEBUG, format=LOGFORMAT)
-    base_dir = os.path.abspath(os.path.split(__file__)[0]+'/..')
-    LOCAL_FILE = os.path.join(base_dir, "data","treasury_yield.csv")
+    # base_dir = os.path.abspath(os.path.split(__file__)[0]+'/..')
+    # LOCAL_FILE = os.path.join(base_dir, "data","treasury_yield.csv")
+    from optparse import OptionParser
+    parser = OptionParser(description='Download US Treasury Bond Rates')
+    parser.add_option("-f", "--file", dest="filename",
+                    help="CSV File Path", metavar="FILE")
+    (options, args) = parser.parse_args()
+    print(options,args)
+    csv_file_path = options.filename
 
-    df = load_web_data(LOCAL_FILE)
+    df = load_web_data(csv_file_path)
     print(df.tail(1))
 
 
 if __name__ == "__main__":
+
     main()
+    
