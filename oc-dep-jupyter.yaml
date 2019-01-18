@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -72,7 +73,52 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: jupyter-storage-class
   resources:
     requests:
       storage: 1Gi
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  creationTimestamp: null
+  labels:
+    parent: cron-py
+  name: tres-rate-fetch
+spec:
+  concurrencyPolicy: Allow
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      successfulJobsHistoryLimit: 3
+      failedJobsHistoryLimit: 1
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            parent: cron-py
+        spec:
+          containers:
+            - command:
+                - /bin/bash
+                - -c
+                - >
+                  cd /home/jovyan;
+                  ls -al;
+                  [ -d "jupyter-analytics" ] || git clone https://github.com/ajarv/jupyter-analytics.git;
+                  cd /home/jovyan/jupyter-analytics;
+                  git pull;
+                  bash jobs/jseq.sh;
+              image: jupyter/scipy-notebook
+              name: pandu
+              resources: {}
+              volumeMounts:
+                - name: jovyan-data
+                  mountPath: /home/jovyan
+          volumes:
+            - name: jovyan-data
+              persistentVolumeClaim:
+                claimName: jovyan-data
+          restartPolicy: OnFailure
+  # schedule: "*/1 * * * *"
+  schedule: "12 6 * * *"
