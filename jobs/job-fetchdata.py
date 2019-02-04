@@ -71,7 +71,7 @@ def main():
     # LOCAL_FILE = os.path.join(base_dir, "data","treasury_yield.csv")
     from optparse import OptionParser
     parser = OptionParser(description='Download US Treasury Bond Rates')
-    parser.add_option("-f", "--file", dest="filename",
+    parser.add_option("-f", "--out-csv", dest="filename",
                     help="CSV File Path", metavar="FILE")
     (options, args) = parser.parse_args()
     print(options,args)
