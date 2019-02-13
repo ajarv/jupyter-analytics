@@ -73,6 +73,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
+  storageClassName: jupyter-storage-class
   resources:
     requests:
       storage: 1Gi
