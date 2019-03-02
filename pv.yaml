@@ -1,0 +1,21 @@
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: jupyter-storage-class
+provisioner: no-provisioning
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jupyter
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Recycle 
+  storageClassName: jupyter-storage-class
+  hostPath:
+    path: /mnt/data/ja-vol
