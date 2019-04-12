@@ -40,4 +40,6 @@ spec:
     path: ${pv_dir_path}
 GOPHER
 
+
+oc login -u admin 
 oc apply -f  ${pv_cfg_file}

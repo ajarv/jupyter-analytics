@@ -31,7 +31,8 @@ spec:
       terminationGracePeriodSeconds: 10
       initContainers:
         - name: init-jupyter
-          image: jupyter/scipy-notebook #jupyter/minimal-notebook:latest
+          image: docker-registry.default.svc:5000/jup/jupyter-image
+          # image: jupyter/scipy-notebook #jupyter/minimal-notebook:latest
           volumeMounts:
             - name: jovyan-data
               mountPath: /home/jovyan
@@ -44,7 +45,8 @@ spec:
               [ -d "jupyter-analytics" ] || git clone https://github.com/ajarv/jupyter-analytics.git
       containers:
         - name: jupyter
-          image: jupyter/scipy-notebook #jupyter/minimal-notebook:latest
+          image: docker-registry.default.svc:5000/jup/jupyter-image
+          # image: jupyter/scipy-notebook #jupyter/minimal-notebook:latest
           env:
             - name: JUPYTER_NOTEBOOK_PASSWORD
               value: lavendarseed
